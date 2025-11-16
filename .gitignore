@@ -3,6 +3,7 @@
 **/bin/
 **/bin-int/
 **/obj/
+**/__pycache__
 
 # Files
 *.vcxproj
