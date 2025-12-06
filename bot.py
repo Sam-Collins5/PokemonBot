@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 import os
 from dotenv import load_dotenv
+import pokeapi
+import json
 
 import api_client
 
@@ -27,6 +29,24 @@ async def _get_db_user_id(discord_id: int):
     """
     user = await api_client.get_or_create_user(discord_id)
     return int(user["user_id"])
+
+@bot.command()
+async def addtopokedex(ctx, name:str):
+
+    mon = pokeapi.get_pokemon(name)
+
+    if mon != None:
+        try:
+            await api_client.create_pokemon(mon)
+        except api_client.ApiError as exc:
+            await ctx.send(f"Failed to add pokemon to your pokedex:\n {exc}")
+            return
+    else:
+        await ctx.send("Pokemon not recognized...")
+
+    await ctx.send(
+        f"{mon["name"]} added to pokedex!\n"
+    )
 
 
 @bot.command()

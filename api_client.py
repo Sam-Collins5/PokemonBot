@@ -93,3 +93,12 @@ async def create_team_for_user(
     if not team:
         raise ApiError("API returned empty response when creating team")
     return team
+
+
+#   Pokemon
+
+async def create_pokemon(pokemon) -> Dict[str, Any]:
+    poke = await _request("POST", "/pokemon/", json=pokemon)
+    if not poke:
+        raise ApiError("API returned empty response")
+    return poke

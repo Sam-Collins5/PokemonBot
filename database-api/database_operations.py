@@ -206,7 +206,6 @@ def pokemon_create(new_pokemon: dict):
         global session
         pokemon = Pokemon()
 
-        pokemon.PokemonId = int(new_pokemon["pokemon_id"])
         pokemon.Species = new_pokemon["species"]
 
         pokemon.Ability = new_pokemon["ability"]
@@ -214,10 +213,10 @@ def pokemon_create(new_pokemon: dict):
         pokemon.Move1 = new_pokemon["move1"]
         pokemon.Move2 = new_pokemon["move2"]
         pokemon.Move3 = new_pokemon["move3"]
-        pokemon.Move4 = new_pokemon["move4"]
 
-        pokemon.TeamId = int(new_pokemon["team_id"])
-        pokemon.UserId = int(new_pokemon["user_id"])
+
+        #pokemon.TeamId = int(new_pokemon["team_id"])
+        #pokemon.UserId = int(new_pokemon["user_id"])
         
         session.add(pokemon)
         session.commit()
