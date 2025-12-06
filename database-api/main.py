@@ -97,10 +97,10 @@ async def read_team(userId: str = "", teamId: str = ""):
 async def read_user_teams(userId: str = ""):
     if not userId:
         return
-    teams = get_user_team(int(userId))
+    teams = get_user_teams(int(userId))
     if not teams:
         return
-    team_list = list()
+    team_list = []
     for team in teams:
         team_list.append(team.json())
     return team_list
@@ -124,13 +124,13 @@ async def create_team(new_team: dict):
     except Exception as e:
         print(f"create_team failed: {e}")
         return
-
+    
 
 @app.delete("/teams/{teamId}")
-async def delete_user(userId: str):
-    if not userId:
+async def delete_team(teamId: str):  # Changed to delete_team
+    if not teamId:
         return
-    user_delete(int(userId))
+    team_delete(int(teamId))
 
 
 # Pokemon

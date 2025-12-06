@@ -15,7 +15,7 @@ class User(Base):
         json = dict()
         json["user_id"] = self.UserId
         json["discord_id"] = self.DiscordId
-
+        return json  # Made it return json
 
 class Team(Base):
     __tablename__ = "Team"
@@ -42,6 +42,7 @@ class Team(Base):
         json["pokemon_id4"] = self.PokemonId4
         json["pokemon_id5"] = self.PokemonId5
         json["pokemon_id6"] = self.PokemonId6
+        return json  # Made it return json
 
 
 class Pokemon(Base):
@@ -67,7 +68,7 @@ class Pokemon(Base):
         json["species"] = self.Species
         json["ability"] = self.Ability
         json["move1"] = self.Move1
-        json["move2"] = self.Move1
+        json["move2"] = self.Move2 # Fixed a typo
         json["move3"] = self.Move3
         json["move4"] = self.Move4
         json["team_id"] = self.TeamId

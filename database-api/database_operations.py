@@ -45,7 +45,9 @@ def user_update(user_id: int, updated_user: dict):
 def user_create(new_user: dict):
     try:
         global session
-        user = User(int(new_user["user_id"]), int(new_user["discord_id"]))
+        user = User()
+        # Changed to let the database pick UserId instead of it being explicit
+        user.DiscordId = int(new_user["discord_id"])
         session.add(user)
         session.commit()
         return user
@@ -76,15 +78,21 @@ def get_teams():
 def get_user_teams(user_id: int):
     try:
         global session
-        return session.query(Team).where(Team.UserId == user_id)
+        return session.query(Team).where(Team.UserId == user_id).all()
     except Exception as e:
         print(f"get_user_teams failed: {e}")
+
 
 
 def get_user_team(user_id: int, team_id: int):
     try:
         global session
-        return session.query(Team).where(Team.UserId == user_id).where(Team.TeamId == team_id)
+        return (
+            session.query(Team)
+            .where(Team.UserId == user_id)
+            .where(Team.TeamId == team_id)
+            .first()
+        )
     except Exception as e:
         print(f"get_user_team failed: {e}")
 
@@ -93,17 +101,16 @@ def team_update(team_id: int, updated_team: dict):
     try:
         global session
         team = session.query(Team).where(Team.TeamId == team_id).first()
+        team.TeamId = int(updated_team["team_id"])
+        team.TeamName = updated_team["team_name"]
+        team.UserId = int(updated_team["user_id"])
 
-        team.teamId = int(updated_team["team_id"])
-        team.teamName = updated_team["team_name"]
-        team.userId = int(updated_team["user_id"])
-
-        team.PokemonId1 = updated_team["pokemon_id1"]
-        team.PokemonId2 = updated_team["pokemon_id2"]
-        team.PokemonId3 = updated_team["pokemon_id3"]
-        team.PokemonId4 = updated_team["pokemon_id4"]
-        team.PokemonId5 = updated_team["pokemon_id5"]
-        team.PokemonId6 = updated_team["pokemon_id6"]
+        team.PokemonId1 = int(updated_team["pokemon_id1"])
+        team.PokemonId2 = int(updated_team["pokemon_id2"])
+        team.PokemonId3 = int(updated_team["pokemon_id3"])
+        team.PokemonId4 = int(updated_team["pokemon_id4"])
+        team.PokemonId5 = int(updated_team["pokemon_id5"])
+        team.PokemonId6 = int(updated_team["pokemon_id6"])
 
         session.commit()
         return team
@@ -115,28 +122,29 @@ def team_create(new_team: dict):
     try:
         global session
         team = Team()
-        team.teamId = int(new_team["team_id"])
-        team.teamName = new_team["team_name"]
-        team.userId = int(new_team["user_id"])
+        # Let DB choose TeamId
+        team.TeamName = new_team["team_name"]
+        team.UserId = int(new_team["user_id"])
 
-        team.PokemonId1 = new_team["pokemon_id1"]
-        team.PokemonId2 = new_team["pokemon_id2"]
-        team.PokemonId3 = new_team["pokemon_id3"]
-        team.PokemonId4 = new_team["pokemon_id4"]
-        team.PokemonId5 = new_team["pokemon_id5"]
-        team.PokemonId6 = new_team["pokemon_id6"]
+        team.PokemonId1 = int(new_team["pokemon_id1"])
+        team.PokemonId2 = int(new_team["pokemon_id2"])
+        team.PokemonId3 = int(new_team["pokemon_id3"])
+        team.PokemonId4 = int(new_team["pokemon_id4"])
+        team.PokemonId5 = int(new_team["pokemon_id5"])
+        team.PokemonId6 = int(new_team["pokemon_id6"])
 
         session.add(team)
         session.commit()
-        return 
+        return team
     except Exception as e:
         print(f"team_create failed: {e}")
+
 
 
 def team_delete(team_id: int):
     try:
         global session
-        team = session.query(Team).where(Team.TeamIdId == team_id).first()
+        team = session.query(Team).where(Team.TeamId == team_id).first()  # Fixed typo
         session.delete(team)
         session.commit()
     except Exception as e:
@@ -231,7 +239,13 @@ def pokemon_delete(pokemon_id: int):
 def database_init():
     DATABASE_URL = "sqlite:///../database/pokemon-bot.db"
 
-    engine = create_engine(DATABASE_URL, pool_size=5, pool_recycle=1800, pool_pre_ping=True)
+    engine = create_engine(
+        DATABASE_URL,
+        pool_size=5,
+        pool_recycle=1800,
+        pool_pre_ping=True,
+    )
+    Base.metadata.create_all(engine)
 
     session_factory = sessionmaker(autoflush=False, bind=engine)
 
